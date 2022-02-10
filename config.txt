@@ -1,4 +1,4 @@
 TOKEN
 CHANNELID
 GUILDID
-check222
+check333
