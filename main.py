@@ -21,11 +21,11 @@ def read_file(file_name):
 # helper function to remove line from file so they dont get used again
 def delete_line(file_name, line_num, messages):
     # adds the removed lines to a new file to keep data
-    removed_msg = open(file_name+'RemovedMsg.txt', 'a')
+    removed_msg = open('./textFiles/'+file_name+'RemovedMsg.txt', 'a')
     removed_msg.write(messages[line_num])
     removed_msg.close()
     del messages[line_num]
-    new_messages = open(file_name+'Msg.txt', "w+")
+    new_messages = open('./textFiles/'+file_name+'Msg.txt', "w+")
     for line in messages:
         new_messages.write(line)
     new_messages.close()
@@ -33,12 +33,12 @@ def delete_line(file_name, line_num, messages):
 def message(name, count, messageId, reply):
     global token_count, last_message
     # these get the file and shuffle it to randomize the message and token order
-    tokens = read_file(name+'Tokens.txt')
+    tokens = read_file('./textFiles/'+name+'Tokens.txt')
     num_tokens = len(tokens)
     rand_list_tokens = list(range(num_tokens))
     random.shuffle(rand_list_tokens)
 
-    messages = read_file(name+'Msg.txt')
+    messages = read_file('./textFiles/'+name+'Msg.txt')
     num_messages = len(messages)
     rand_list = list(range(num_messages))
     random.shuffle(rand_list)
@@ -66,17 +66,17 @@ def message(name, count, messageId, reply):
 # gets the user info and channel
 TOKEN = (read_file('config.txt')[0]).strip()
 CHANNELID = (read_file('config.txt')[1]).strip()
+GUILDID = (read_file('config.txt')[2]).strip()
 
 # setting up counts for while loops
 token_count = 0
-adminMessages = read_file('adminMsg.txt')
-adminCount = len(adminMessages) - 1
+admin_messages = read_file('./textFiles/adminMsg.txt')
+admin_count = len(admin_messages) - 1
+user_messages = read_file('./textFiles/userMsg.txt')
+user_count = len(user_messages) - 1
 
-userMessages = read_file('userMsg.txt')
-userCount = len(userMessages) - 1
-
-secondMessages = read_file('secondUserMsg.txt')
-secondUserCount = len(secondMessages) -1
+second_messages = read_file('./textFiles/secondUserMsg.txt')
+seconduser_count = len(second_messages) -1
 
 bot = discum.Client(token=TOKEN, log=False) # discord token to login with
 
@@ -88,27 +88,25 @@ last_message = "How are we all going??"
 # these loops deal with the actual sending and ordering of messages
 # randomization makes sure that it doesnt sent all the messages at once
 
-while adminCount >= 0:
-    message('admin', adminCount, "", False)
-    time.sleep(10)
-    result = bot.searchMessages(CHANNELID, textSearch=last_message)
-    lastMessageString = bot.filterSearchResults(result)
-    lastMessageId = lastMessageString[0].get("id")
-    adminCount -= 1
+while admin_count >= 0:
+    message('admin', admin_count, "", False)
+    time.sleep(20)
+    result = bot.searchMessages(GUILDID, textSearch=last_message)
+    last_message_string = bot.filterSearchResults(result)
+    last_message_id = last_message_string[0].get("id")
+    # last_message_id = "941158578843189259"
+    admin_count -= 1
     time.sleep(1)
 
-    while userCount >= (random.randint(0, userCount)+1):
-        message('user', userCount, lastMessageId, True)
-        userCount -= 1
+    while user_count >= (random.randint(0, user_count)+1):
+        message('user', user_count, last_message_id, True)
+        user_count -= 1
         time.sleep(1)
         
-        while secondUserCount >= (random.randint(0, secondUserCount)+1):
-            print(secondUserCount) 
-            message('secondUser', secondUserCount, lastMessageId, False)
-            secondUserCount -= 1
+        while seconduser_count >= (random.randint(0, seconduser_count)+1): 
+            message('secondUser', seconduser_count, last_message_id, False)
+            seconduser_count -= 1
             time.sleep(1)
-            
+
 # TO-DO
-# USE AN IF STATEMENT TO GO TO 3RD DEPTH OF CONVERSATION
 # NEED TO TIDY UP THE RANDOM IN THE WHILE LOOP AS ENDS ONE ITERATION EARLY
-# SETUP GITHUB REPO
