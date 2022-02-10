@@ -46,7 +46,8 @@ def message(name, count, messageId, reply):
     token = tokens[rand_list_tokens[token_count]].strip() # gets rid of the new line character on the end
     bot.switchAccount(token) # switchs to the new account
     print("Account switched to: " + token)
-
+    bot.typingAction(CHANNELID)
+    time.sleep(5) #lets the typing action run for 5 sec before sending amessage
     token_count += 1
     if (token_count == num_tokens): 
         # resets the account count so if there are more accounts then messages it will cycle through them
@@ -94,7 +95,6 @@ while admin_count >= 0:
     result = bot.searchMessages(GUILDID, textSearch=last_message)
     last_message_string = bot.filterSearchResults(result)
     last_message_id = last_message_string[0].get("id")
-    # last_message_id = "941158578843189259"
     admin_count -= 1
     time.sleep(1)
 
