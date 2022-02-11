@@ -80,7 +80,6 @@ second_messages = read_file('./textFiles/secondUserMsg.txt')
 seconduser_count = len(second_messages) -1
 
 bot = discum.Client(token=TOKEN, log=False) # discord token to login with
-print(bot.info(True))
 print("Started Text Spam")
 # send inital admin message to start convo
 bot.sendMessage(CHANNELID, "How are we all going??")
