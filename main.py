@@ -12,6 +12,7 @@ global token_count
 global last_message
 global TOKEN
 global CHANNELID
+
 # helper function to read files i think this can be simplified at some point but it works rn
 def read_file(file_name):
     with open (file_name, 'r', encoding = 'UTF-8') as file:
@@ -63,50 +64,60 @@ def message(name, count, messageId, reply):
         print("Sending: " + messages[rand_list[count]])
         last_message = messages[rand_list[count]]
     delete_line(name, rand_list[count], messages)
+
+
+def main():
     
+    # setting up counts for while loops
+    
+    admin_messages = read_file('./textFiles/adminMsg.txt')
+    admin_count = len(admin_messages) - 1
+    user_messages = read_file('./textFiles/userMsg.txt')
+    user_count = len(user_messages) - 1
+
+    second_messages = read_file('./textFiles/secondUserMsg.txt')
+    seconduser_count = len(second_messages) -1
+
+    
+    print("Started Text Spam")
+    # send inital admin message to start convo
+    bot.sendMessage(CHANNELID, "How are we all going??")
+    last_message = "How are we all going??"
+
+    # these loops deal with the actual sending and ordering of messages
+    # randomization makes sure that it doesnt sent all the messages at once
+
+    while admin_count >= 0:
+        message('admin', admin_count, "", False)
+        time.sleep(20)
+        result = bot.searchMessages(GUILDID, textSearch=last_message)
+        last_message_string = bot.filterSearchResults(result)
+        last_message_id = last_message_string[0].get("id")
+        admin_count -= 1
+        time.sleep(1)
+
+        while user_count >= (random.randint(0, user_count)+1):
+            message('user', user_count, last_message_id, True)
+            user_count -= 1
+            time.sleep(1)
+            
+            while seconduser_count >= (random.randint(0, seconduser_count)+1): 
+                message('secondUser', seconduser_count, last_message_id, False)
+                seconduser_count -= 1
+                time.sleep(1)
+
+
+
 # gets the user info and channel
 TOKEN = (read_file('config.txt')[0]).strip()
 CHANNELID = (read_file('config.txt')[1]).strip()
 GUILDID = (read_file('config.txt')[2]).strip()
-
-# setting up counts for while loops
-token_count = 0
-admin_messages = read_file('./textFiles/adminMsg.txt')
-admin_count = len(admin_messages) - 1
-user_messages = read_file('./textFiles/userMsg.txt')
-user_count = len(user_messages) - 1
-
-second_messages = read_file('./textFiles/secondUserMsg.txt')
-seconduser_count = len(second_messages) -1
-
 bot = discum.Client(token=TOKEN, log=False) # discord token to login with
-print("Started Text Spam")
-# send inital admin message to start convo
-bot.sendMessage(CHANNELID, "How are we all going??")
-last_message = "How are we all going??"
+token_count = 0
 
-# these loops deal with the actual sending and ordering of messages
-# randomization makes sure that it doesnt sent all the messages at once
-
-while admin_count >= 0:
-    message('admin', admin_count, "", False)
-    time.sleep(20)
-    result = bot.searchMessages(GUILDID, textSearch=last_message)
-    last_message_string = bot.filterSearchResults(result)
-    last_message_id = last_message_string[0].get("id")
-    admin_count -= 1
-    time.sleep(1)
-
-    while user_count >= (random.randint(0, user_count)+1):
-        message('user', user_count, last_message_id, True)
-        user_count -= 1
-        time.sleep(1)
-        
-        while seconduser_count >= (random.randint(0, seconduser_count)+1): 
-            message('secondUser', seconduser_count, last_message_id, False)
-            seconduser_count -= 1
-            time.sleep(1)
-
+if __name__ == "__main__":
+    main()
+    
 # TO-DO
 # NEED TO TIDY UP THE RANDOM IN THE WHILE LOOP AS ENDS ONE ITERATION EARLY
 # NEED TO ADD IN THE IF STATEMENTS 
